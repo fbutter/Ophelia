@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fragebogen: dein KI-Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAFAF8; --panel:#FFFFFF; --ink:#22201C; --muted:#7C766B;
+  --line:#E6E2D9; --accent:#335C81; --accent-soft:#ECF1F6; --accent-ink:#26486A;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+.top{position:sticky; top:0; z-index:20; background:rgba(250,250,248,.92);
+  backdrop-filter:saturate(140%) blur(8px); border-bottom:1px solid var(--line);}
+.bar{height:3px; background:var(--line);}
+.fill{height:3px; width:0%; background:var(--accent); transition:width .25s ease;}
+.topinner{max-width:760px; margin:0 auto; padding:10px 22px; display:flex;
+  justify-content:space-between; align-items:center;}
+.brand{font-family:"Bricolage Grotesque",sans-serif; font-weight:600; letter-spacing:.01em; font-size:14px;}
+.count{font-variant-numeric:tabular-nums; color:var(--muted); font-size:13px;}
+main{max-width:760px; margin:0 auto; padding:42px 22px 90px;}
+h1{font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:clamp(30px,5vw,42px);
+  line-height:1.05; letter-spacing:-.01em; margin:0 0 14px;}
+.lead{color:var(--muted); max-width:62ch; margin:0 0 34px; font-size:15.5px;}
+.lead strong{color:var(--accent-ink);}
+h2.sec{font-family:"Bricolage Grotesque",sans-serif; font-weight:600; font-size:21px;
+  margin:54px 0 6px; padding-bottom:8px; border-bottom:2px solid var(--ink); letter-spacing:.005em;}
+.secnote{color:var(--muted); font-size:14.5px; margin:0 0 22px; padding-left:14px;
+  border-left:2px solid var(--accent); line-height:1.55;}
+.q{margin:0 0 26px;}
+.qhead{margin:0 0 8px;}
+.qnum{font-family:"Bricolage Grotesque",sans-serif; font-weight:700; color:var(--accent);}
+.qtext{font-weight:500;}
+.note{color:var(--muted); font-size:13.5px; margin:-2px 0 10px; padding-left:14px;
+  border-left:2px solid var(--line); font-style:italic;}
+input[type=text], textarea{
+  width:100%; font:inherit; color:var(--ink); background:var(--panel);
+  border:1px solid var(--line); border-radius:var(--radius); padding:11px 13px;
+  transition:border-color .15s, box-shadow .15s;}
+textarea{resize:vertical; min-height:60px;}
+input[type=text]:focus, textarea:focus{outline:none; border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-soft);}
+.subs{display:grid; gap:9px;}
+.sub{display:grid; grid-template-columns:minmax(150px,38%) 1fr; align-items:center; gap:12px;}
+.sub.extra{margin-top:9px;}
+.sublabel{color:var(--muted); font-size:14px;}
+@media(max-width:560px){ .sub{grid-template-columns:1fr; gap:4px;} .sublabel{font-size:13px;} }
+.opts{display:flex; flex-direction:column; gap:8px;}
+.opt{display:flex; align-items:flex-start; gap:11px; padding:10px 13px; cursor:pointer;
+  border:1px solid var(--line); border-radius:var(--radius); background:var(--panel);
+  transition:border-color .15s, background .15s;}
+.opt:hover{border-color:#cfc9bd;}
+.opt input{margin:2px 0 0; accent-color:var(--accent); width:18px; height:18px; flex:none; cursor:pointer;}
+.opt span{user-select:none;}
+.opt:has(input:checked){border-color:var(--accent); background:var(--accent-soft);}
+.scale{display:flex; flex-wrap:wrap; gap:7px;}
+.scaleopt{position:relative;}
+.scaleopt input{position:absolute; opacity:0; inset:0; cursor:pointer;}
+.scaleopt span{display:grid; place-items:center; width:40px; height:40px; border:1px solid var(--line);
+  border-radius:9px; background:var(--panel); font-variant-numeric:tabular-nums; cursor:pointer;
+  transition:all .12s;}
+.scaleopt:hover span{border-color:#cfc9bd;}
+.scaleopt input:checked + span{background:var(--accent); color:#fff; border-color:var(--accent);}
+.scaleopt input:focus-visible + span{box-shadow:0 0 0 3px var(--accent-soft);}
+.actions{display:flex; flex-wrap:wrap; gap:12px; margin:46px 0 16px; padding-top:26px;
+  border-top:1px solid var(--line);}
+.btn{font:inherit; font-weight:500; padding:12px 20px; border-radius:var(--radius);
+  border:1px solid var(--line); background:var(--panel); color:var(--ink); cursor:pointer;
+  transition:all .15s;}
+.btn:hover{border-color:#cfc9bd;}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+.btn.primary:hover{background:var(--accent-ink); border-color:var(--accent-ink);}
+.btn.ghost{color:var(--muted);}
+.btn:focus-visible{outline:none; box-shadow:0 0 0 3px var(--accent-soft);}
+.foot{color:var(--muted); font-size:13px; margin-top:6px;}
+.toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+  background:var(--ink); color:#fff; padding:11px 18px; border-radius:99px; font-size:14px;
+  opacity:0; pointer-events:none; transition:all .25s; z-index:50;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+@media(prefers-reduced-motion:reduce){*{transition:none!important; scroll-behavior:auto!important;}}
+</style>
+</head>
+<body>
+<header class="top"><div class="bar"><div class="fill" id="fill"></div></div><div class="topinner"><span class="brand">Fragebogen · KI-Setup</span><span class="count" id="count">0 / 62</span></div></header>
+<main>
+<h1>Fragebogen: dein KI-Setup</h1>
+<p class="lead">Klick dich in Ruhe durch. Stichworte reichen, leer lassen ist okay. Dein Stand wird im Browser automatisch gesichert. Ganz unten: <strong>Antworten kopieren</strong> und mir zurückschicken.</p>
+<h2 class="sec">A — Business</h2>
+<section class="q" data-num="1">
+<p class="qhead"><span class="qnum">1.</span> <span class="qtext">Wie heißt dein Business (oder Arbeitstitel)?</span></p>
+<input class="ans" id="f1" type="text" autocomplete="off">
+</section>
+<section class="q" data-num="2">
+<p class="qhead"><span class="qnum">2.</span> <span class="qtext">Was bietest du an, und was unterscheidet dich von anderen Kreativ-/DIY-Creator·innen?</span></p>
+<textarea class="ans" id="f2" rows="3"></textarea>
+</section>
+<section class="q" data-num="3">
+<p class="qhead"><span class="qnum">3.</span> <span class="qtext">Wo stehst du gerade?</span></p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q3" value="Idee"><span>Idee</span></label>
+<label class="opt"><input type="radio" name="q3" value="Aufbau / vor dem Start"><span>Aufbau / vor dem Start</span></label>
+<label class="opt"><input type="radio" name="q3" value="Erste Verkäufe"><span>Erste Verkäufe</span></label>
+<label class="opt"><input type="radio" name="q3" value="Läuft &amp; wächst"><span>Läuft &amp; wächst</span></label>
+</div>
+</section>
+<section class="q" data-num="4">
+<p class="qhead"><span class="qnum">4.</span> <span class="qtext">Womit verdienst du Geld (oder willst du)?</span></p>
+<div class="opts">
+<label class="opt"><input type="checkbox" name="q4" value="Einzelne Videos zum Kauf"><span>Einzelne Videos zum Kauf</span></label>
+<label class="opt"><input type="checkbox" name="q4" value="Kurse / Bundles"><span>Kurse / Bundles</span></label>
+<label class="opt"><input type="checkbox" name="q4" value="Mitgliedschaft / Abo"><span>Mitgliedschaft / Abo</span></label>
+<label class="opt"><input type="checkbox" name="q4" value="Coaching / 1:1"><span>Coaching / 1:1</span></label>
+</div>
+<label class="sub extra"><span class="sublabel">Sonstiges</span><input class="ans" id="f3" type="text" data-sub="Sonstiges" autocomplete="off"></label>
+</section>
+<section class="q" data-num="5">
+<p class="qhead"><span class="qnum">5.</span> <span class="qtext">Umsatz pro Monat (grob) und Anzahl Verkäufe? (Noch nichts verkauft → dein Ziel?)</span></p>
+<textarea class="ans" id="f4" rows="3"></textarea>
+</section>
+<section class="q" data-num="6">
+<p class="qhead"><span class="qnum">6.</span> <span class="qtext">Du arbeitest solo — gibt es trotzdem Unterstützung? (Editor·in, virtuelle Assistenz, Einzelaufgaben)</span></p>
+<textarea class="ans" id="f5" rows="3"></textarea>
+</section>
+<section class="q" data-num="7">
+<p class="qhead"><span class="qnum">7.</span> <span class="qtext">Wo willst du in 1–3 Jahren stehen?</span></p>
+<textarea class="ans" id="f6" rows="3"></textarea>
+</section>
+<h2 class="sec">B — Deine Leute (Persona)</h2>
+<p class="secnote">Persona = eine erfundene, konkrete Person, die für deine typische Kundin steht (Name, Alter, Alltag, Wünsche, Sorgen). Beispiel: „Lena, 29, Büro, näht abends zur Entspannung, will eigene Outfits, traut sich aber nicht ohne Anleitung.“ Je konkreter, desto besser treffen die Texte später deine Leute.</p>
+<section class="q" data-num="8">
+<p class="qhead"><span class="qnum">8.</span> <span class="qtext">Beschreib deine typische Käuferin konkret (Alter, Lebenssituation, Beruf/Alltag).</span></p>
+<textarea class="ans" id="f7" rows="3"></textarea>
+</section>
+<section class="q" data-num="9">
+<p class="qhead"><span class="qnum">9.</span> <span class="qtext">Auf welchem Level steigen die meisten ein?</span></p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q9" value="Absolute Anfängerinnen"><span>Absolute Anfängerinnen</span></label>
+<label class="opt"><input type="radio" name="q9" value="Hobby-Level"><span>Hobby-Level</span></label>
+<label class="opt"><input type="radio" name="q9" value="Fortgeschritten"><span>Fortgeschritten</span></label>
+<label class="opt"><input type="radio" name="q9" value="Gemischt"><span>Gemischt</span></label>
+</div>
+</section>
+<section class="q" data-num="10">
+<p class="qhead"><span class="qnum">10.</span> <span class="qtext">Was treibt deine Leute tief drin an? (mehrere möglich)</span></p>
+<div class="opts">
+<label class="opt"><input type="checkbox" name="q10" value="Selbstausdruck / Individualität"><span>Selbstausdruck / Individualität</span></label>
+<label class="opt"><input type="checkbox" name="q10" value="Nachhaltigkeit / weg von Fast Fashion"><span>Nachhaltigkeit / weg von Fast Fashion</span></label>
+<label class="opt"><input type="checkbox" name="q10" value="Kreatives Hobby / Entspannung"><span>Kreatives Hobby / Entspannung</span></label>
+<label class="opt"><input type="checkbox" name="q10" value="Geld sparen"><span>Geld sparen</span></label>
+<label class="opt"><input type="checkbox" name="q10" value="Eigene Marke / beruflich"><span>Eigene Marke / beruflich</span></label>
+</div>
+<label class="sub extra"><span class="sublabel">Anderes</span><input class="ans" id="f8" type="text" data-sub="Anderes" autocomplete="off"></label>
+</section>
+<section class="q" data-num="11">
+<p class="qhead"><span class="qnum">11.</span> <span class="qtext">Womit hadert sie, bevor sie zu dir kommt? Welches Problem oder welcher Wunsch?</span></p>
+<textarea class="ans" id="f9" rows="3"></textarea>
+</section>
+<section class="q" data-num="12">
+<p class="qhead"><span class="qnum">12.</span> <span class="qtext">Was hält sie vom Loslegen ab? (z. B. „nicht kreativ genug“, „keine Zeit“, „weiß nicht, wo anfangen“, „zu teuer“)</span></p>
+<textarea class="ans" id="f10" rows="3"></textarea>
+</section>
+<section class="q" data-num="13">
+<p class="qhead"><span class="qnum">13.</span> <span class="qtext">Wo ist deine Zielgruppe online? (mehrere möglich)</span></p>
+<div class="opts">
+<label class="opt"><input type="checkbox" name="q13" value="Pinterest"><span>Pinterest</span></label>
+<label class="opt"><input type="checkbox" name="q13" value="Instagram"><span>Instagram</span></label>
+<label class="opt"><input type="checkbox" name="q13" value="TikTok"><span>TikTok</span></label>
+<label class="opt"><input type="checkbox" name="q13" value="YouTube"><span>YouTube</span></label>
+<label class="opt"><input type="checkbox" name="q13" value="Foren"><span>Foren</span></label>
+<label class="opt"><input type="checkbox" name="q13" value="Facebook-Gruppen"><span>Facebook-Gruppen</span></label>
+</div>
+<label class="sub extra"><span class="sublabel">Woanders</span><input class="ans" id="f11" type="text" data-sub="Woanders" autocomplete="off"></label>
+</section>
+<section class="q" data-num="14">
+<p class="qhead"><span class="qnum">14.</span> <span class="qtext">Eine Hauptzielgruppe oder mehrere? Wenn mehrere: welche, und welche ist die wichtigste?</span></p>
+<textarea class="ans" id="f12" rows="3"></textarea>
+</section>
+<section class="q" data-num="15">
+<p class="qhead"><span class="qnum">15.</span> <span class="qtext">Gibt es eine Lieblingskundin, an die du beim Erstellen denkst? Beschreib sie kurz.</span></p>
+<textarea class="ans" id="f13" rows="3"></textarea>
+</section>
+<h2 class="sec">C — Angebot &amp; Videos</h2>
+<section class="q" data-num="16">
+<p class="qhead"><span class="qnum">16.</span> <span class="qtext">Wie ist dein Angebot aufgebaut? (Produkte, Preise, was läuft am besten?)</span></p>
+<textarea class="ans" id="f14" rows="3"></textarea>
+</section>
+<section class="q" data-num="17">
+<p class="qhead"><span class="qnum">17.</span> <span class="qtext">Wie wird aus einer Idee ein fertiges Video — Schritt für Schritt? (Idee → Skript → Drehen → Schnitt → Hochladen)</span></p>
+<textarea class="ans" id="f15" rows="3"></textarea>
+</section>
+<section class="q" data-num="18">
+<p class="qhead"><span class="qnum">18.</span> <span class="qtext">Wie viel Zeit kostet ein Video im Schnitt, und welcher Schritt nervt am meisten?</span></p>
+<textarea class="ans" id="f16" rows="3"></textarea>
+</section>
+<section class="q" data-num="19">
+<p class="qhead"><span class="qnum">19.</span> <span class="qtext">Wie entscheidest du, was als Nächstes drankommt? Ideen-Sammlung oder Content-Plan vorhanden?</span></p>
+<p class="note">Content-Plan = Übersicht (Liste/Kalender), was du wann veröffentlichst.</p>
+<textarea class="ans" id="f17" rows="3"></textarea>
+</section>
+<section class="q" data-num="20">
+<p class="qhead"><span class="qnum">20.</span> <span class="qtext">Machst du auch kostenlose Inhalte (Reels, Shorts, Posts, Newsletter)? Wie viel Zeit kostet das?</span></p>
+<textarea class="ans" id="f18" rows="3"></textarea>
+</section>
+<h2 class="sec">D — Funnel</h2>
+<p class="secnote">Funnel = der Weg von „kennt dich nicht“ bis „kauft“. Oben viele, unten wenige. Beispiel: 1000 sehen dein Reel → 100 folgen → 20 tragen sich in den Newsletter ein → 3 kaufen. Wo unterwegs die meisten abspringen, können wir später automatisieren.</p>
+<section class="q" data-num="21">
+<p class="qhead"><span class="qnum">21.</span> <span class="qtext">Wie wird jemand zum ersten Mal auf dich aufmerksam? Hauptkanal?</span></p>
+<textarea class="ans" id="f19" rows="3"></textarea>
+</section>
+<section class="q" data-num="22">
+<p class="qhead"><span class="qnum">22.</span> <span class="qtext">Skizzier den typischen Weg von „kennt dich nicht“ bis „kauft“. (z. B. sieht Reel → folgt → Link → … → kauft)</span></p>
+<textarea class="ans" id="f20" rows="3"></textarea>
+</section>
+<section class="q" data-num="23">
+<p class="qhead"><span class="qnum">23.</span> <span class="qtext">Sammelst du E-Mail-Adressen? Wenn ja: mit welchem Lead-Magnet? Wenn nein: warum nicht?</span></p>
+<p class="note">Lead-Magnet / Freebie = kleines kostenloses Geschenk (PDF, Mini-Video) im Tausch gegen die E-Mail-Adresse.</p>
+<textarea class="ans" id="f21" rows="3"></textarea>
+</section>
+<section class="q" data-num="24">
+<p class="qhead"><span class="qnum">24.</span> <span class="qtext">Reichweite ungefähr?</span></p>
+<div class="subs">
+<label class="sub"><span class="sublabel">Follower (pro Kanal)</span><input class="ans" id="f22" type="text" data-sub="Follower (pro Kanal)" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">E-Mail-Liste</span><input class="ans" id="f23" type="text" data-sub="E-Mail-Liste" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Verkäufe pro Monat</span><input class="ans" id="f24" type="text" data-sub="Verkäufe pro Monat" autocomplete="off"></label>
+</div>
+</section>
+<section class="q" data-num="25">
+<p class="qhead"><span class="qnum">25.</span> <span class="qtext">Wo verlierst du die meisten Leute? Wo bricht der Weg ab?</span></p>
+<textarea class="ans" id="f25" rows="3"></textarea>
+</section>
+<section class="q" data-num="26">
+<p class="qhead"><span class="qnum">26.</span> <span class="qtext">Was passiert nach dem Kauf? Onboarding, Upsell, Bewertung?</span></p>
+<p class="note">Onboarding = erste Schritte nach dem Kauf (z. B. Begrüßungs-Mail „So legst du los“). Upsell = passendes Zusatz-Angebot direkt danach (z. B. Schnittmuster-Bundle zum Kurs).</p>
+<textarea class="ans" id="f26" rows="3"></textarea>
+</section>
+<section class="q" data-num="27">
+<p class="qhead"><span class="qnum">27.</span> <span class="qtext">Kaufen Leute mehrmals? Wie hältst du Kontakt zu bestehenden Kund·innen?</span></p>
+<textarea class="ans" id="f27" rows="3"></textarea>
+</section>
+<h2 class="sec">E — Alltag &amp; Zeitfresser</h2>
+<section class="q" data-num="28">
+<p class="qhead"><span class="qnum">28.</span> <span class="qtext">Typische Arbeitswoche — womit geht die meiste Zeit drauf?</span></p>
+<textarea class="ans" id="f28" rows="3"></textarea>
+</section>
+<section class="q" data-num="29">
+<p class="qhead"><span class="qnum">29.</span> <span class="qtext">Welche wiederkehrenden Aufgaben fressen die meiste Zeit?</span></p>
+<textarea class="ans" id="f29" rows="3"></textarea>
+</section>
+<section class="q" data-num="30">
+<p class="qhead"><span class="qnum">30.</span> <span class="qtext">Was nervt am meisten oder machst du am liebsten gar nicht?</span></p>
+<textarea class="ans" id="f30" rows="3"></textarea>
+</section>
+<section class="q" data-num="31">
+<p class="qhead"><span class="qnum">31.</span> <span class="qtext">Was bleibt regelmäßig liegen oder geht unter?</span></p>
+<textarea class="ans" id="f31" rows="3"></textarea>
+</section>
+<section class="q" data-num="32">
+<p class="qhead"><span class="qnum">32.</span> <span class="qtext">Welche eine Aufgabe würdest du sofort abgeben?</span></p>
+<textarea class="ans" id="f32" rows="3"></textarea>
+</section>
+<h2 class="sec">F — Tools</h2>
+<p class="secnote">Wir wollen alle Tools kennen, die du nutzt — und vor allem wofür (der Use Case). Schreib pro Feld: welches Tool und wofür genau. Was du nicht nutzt: leer lassen.<br>Kursplattform / Videohosting = wo deine Videos liegen und gekauft werden (eigene Website oder Tool wie Elopage, Digistore24, Teachable). E-Mail-Marketing-Tool = Programm für Newsletter an viele gleichzeitig. Automation = „Wenn-dann“-Verknüpfung, die von allein läuft.</p>
+<section class="q" data-num="33">
+<p class="qhead"><span class="qnum">33.</span> <span class="qtext">Welche Tools nutzt du — und wofür?</span></p>
+<p class="note">Jeweils Tool + wofür (Use Case).</p>
+<div class="subs">
+<label class="sub"><span class="sublabel">Videos verkaufen/hosten (Elopage, Digistore24, Teachable …)</span><input class="ans" id="f33" type="text" data-sub="Videos verkaufen/hosten (Elopage, Digistore24, Teachable …)" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Video-Schnitt (CapCut, Premiere, DaVinci …)</span><input class="ans" id="f34" type="text" data-sub="Video-Schnitt (CapCut, Premiere, DaVinci …)" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Zahlungsanbieter (Stripe, PayPal …)</span><input class="ans" id="f35" type="text" data-sub="Zahlungsanbieter (Stripe, PayPal …)" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">E-Mail-Marketing (Brevo, Mailchimp, Kit …)</span><input class="ans" id="f36" type="text" data-sub="E-Mail-Marketing (Brevo, Mailchimp, Kit …)" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Social Media &amp; Planung (Kanäle + Tool wie Later/Metricool)</span><input class="ans" id="f37" type="text" data-sub="Social Media &amp; Planung (Kanäle + Tool wie Later/Metricool)" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Design / Grafik (Canva …)</span><input class="ans" id="f38" type="text" data-sub="Design / Grafik (Canva …)" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Website / Landingpages</span><input class="ans" id="f39" type="text" data-sub="Website / Landingpages" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Notizen / Organisation (Notion, Google Docs, To-do)</span><input class="ans" id="f40" type="text" data-sub="Notizen / Organisation (Notion, Google Docs, To-do)" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Kalender &amp; E-Mail</span><input class="ans" id="f41" type="text" data-sub="Kalender &amp; E-Mail" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Wo landen Käufer-/Kundendaten?</span><input class="ans" id="f42" type="text" data-sub="Wo landen Käufer-/Kundendaten?" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Alle weiteren Tools (Buchhaltung, Cloud, Calendly, Community, KI-Tools, Linktree, Loom …)</span><input class="ans" id="f43" type="text" data-sub="Alle weiteren Tools (Buchhaltung, Cloud, Calendly, Community, KI-Tools, Linktree, Loom …)" autocomplete="off"></label>
+</div>
+</section>
+<section class="q" data-num="34">
+<p class="qhead"><span class="qnum">34.</span> <span class="qtext">Nutzt du SEO (über Suche gefunden werden — Google, YouTube, Pinterest, Website)?</span></p>
+<p class="note">SEO = Inhalte so aufbereiten, dass dich Leute über die Suche finden, ohne Werbung zu zahlen.</p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q34" value="Ja, nutze ich"><span>Ja, nutze ich</span></label>
+<label class="opt"><input type="radio" name="q34" value="Plane ich"><span>Plane ich</span></label>
+<label class="opt"><input type="radio" name="q34" value="Nein"><span>Nein</span></label>
+</div>
+<label class="sub extra"><span class="sublabel">Womit / Details</span><input class="ans" id="f44" type="text" data-sub="Womit / Details" autocomplete="off"></label>
+</section>
+<section class="q" data-num="35">
+<p class="qhead"><span class="qnum">35.</span> <span class="qtext">Schaust du auf Analytics (Views, Klicks, Verkäufe — was funktioniert)?</span></p>
+<p class="note">Analytics = Auswertung deiner Zahlen: was zieht und wo Leute abspringen.</p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q35" value="Ja"><span>Ja</span></label>
+<label class="opt"><input type="radio" name="q35" value="Plane ich"><span>Plane ich</span></label>
+<label class="opt"><input type="radio" name="q35" value="Nein"><span>Nein</span></label>
+</div>
+<label class="sub extra"><span class="sublabel">Welche Tools / Details</span><input class="ans" id="f45" type="text" data-sub="Welche Tools / Details" autocomplete="off"></label>
+</section>
+<section class="q" data-num="36">
+<p class="qhead"><span class="qnum">36.</span> <span class="qtext">Welche Tools liebst du, welche nerven?</span></p>
+<textarea class="ans" id="f46" rows="3"></textarea>
+</section>
+<section class="q" data-num="37">
+<p class="qhead"><span class="qnum">37.</span> <span class="qtext">Läuft schon was automatisch (Zapier, Make), oder alles von Hand?</span></p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q37" value="Ja, schon welche"><span>Ja, schon welche</span></label>
+<label class="opt"><input type="radio" name="q37" value="Nein, alles von Hand"><span>Nein, alles von Hand</span></label>
+</div>
+<label class="sub extra"><span class="sublabel">Wenn ja: welche?</span><input class="ans" id="f47" type="text" data-sub="Wenn ja: welche?" autocomplete="off"></label>
+</section>
+<section class="q" data-num="38">
+<p class="qhead"><span class="qnum">38.</span> <span class="qtext">Welches Tool würdest du am liebsten „anweisen“ können, statt reinzuklicken?</span></p>
+<textarea class="ans" id="f48" rows="3"></textarea>
+</section>
+<h2 class="sec">G — Du &amp; KI</h2>
+<section class="q" data-num="39">
+<p class="qhead"><span class="qnum">39.</span> <span class="qtext">Wie viel hast du schon mit KI gemacht (ChatGPT, Claude)? Wofür?</span></p>
+<textarea class="ans" id="f49" rows="3"></textarea>
+</section>
+<section class="q" data-num="40">
+<p class="qhead"><span class="qnum">40.</span> <span class="qtext">Wie wohl fühlst du dich mit Technik?</span></p>
+<p class="note">1 = gar nicht, 10 = total</p>
+<div class="scale">
+<label class="scaleopt"><input type="radio" name="q40" value="1"><span>1</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="2"><span>2</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="3"><span>3</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="4"><span>4</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="5"><span>5</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="6"><span>6</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="7"><span>7</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="8"><span>8</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="9"><span>9</span></label>
+<label class="scaleopt"><input type="radio" name="q40" value="10"><span>10</span></label>
+</div>
+</section>
+<section class="q" data-num="41">
+<p class="qhead"><span class="qnum">41.</span> <span class="qtext">Bedenken beim Thema KI? (Datenschutz, Kontrolle, „klingt das nach mir?“, „ersetzt mich das?“)</span></p>
+<textarea class="ans" id="f50" rows="3"></textarea>
+</section>
+<section class="q" data-num="42">
+<p class="qhead"><span class="qnum">42.</span> <span class="qtext">Wie wichtig ist, dass alles nach dir klingt? Was macht deine Stimme aus?</span></p>
+<p class="note">Dein Ton — locker oder edel? Du-Ansprache? Welche Wörter/Sprüche nutzt du oft?</p>
+<textarea class="ans" id="f51" rows="3"></textarea>
+</section>
+<section class="q" data-num="43">
+<p class="qhead"><span class="qnum">43.</span> <span class="qtext">Was ist dir lieber?</span></p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q43" value="Verstehen, was im Hintergrund passiert, und mitsteuern"><span>Verstehen, was im Hintergrund passiert, und mitsteuern</span></label>
+<label class="opt"><input type="radio" name="q43" value="Soll einfach laufen"><span>Soll einfach laufen</span></label>
+<label class="opt"><input type="radio" name="q43" value="Mischung"><span>Mischung</span></label>
+</div>
+</section>
+<h2 class="sec">H — Wie sie sich anfühlt &amp; wie ihr redet</h2>
+<p class="secnote">So ein System reicht vom nüchternen Werkzeug bis zur persönlichen Assistentin, die deinen Stil kennt, sich erinnert und einen eigenen Charakter hat. Reden kannst du per Text oder per Stimme. Hier geht es nur darum, was sich für dich gut anfühlt.</p>
+<section class="q" data-num="44">
+<p class="qhead"><span class="qnum">44.</span> <span class="qtext">Wie persönlich?</span></p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q44" value="Sachliches Werkzeug reicht"><span>Sachliches Werkzeug reicht</span></label>
+<label class="opt"><input type="radio" name="q44" value="Darf meinen Stil kennen, kein „Charakter“"><span>Darf meinen Stil kennen, kein „Charakter“</span></label>
+<label class="opt"><input type="radio" name="q44" value="Vertraute Assistentin, die mich kennt und mitdenkt"><span>Vertraute Assistentin, die mich kennt und mitdenkt</span></label>
+</div>
+</section>
+<section class="q" data-num="45">
+<p class="qhead"><span class="qnum">45.</span> <span class="qtext">Soll es sich Dinge merken (Vorlieben, frühere Gespräche), oder ist dir das unheimlich?</span></p>
+<p class="note">Merken = z. B. „du magst kurze, lockere Texte“ oder „nächster Kurs startet im März“ wird automatisch mitgedacht.</p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q45" value="Ja"><span>Ja</span></label>
+<label class="opt"><input type="radio" name="q45" value="Ein bisschen"><span>Ein bisschen</span></label>
+<label class="opt"><input type="radio" name="q45" value="Lieber nicht"><span>Lieber nicht</span></label>
+</div>
+</section>
+<section class="q" data-num="46">
+<p class="qhead"><span class="qnum">46.</span> <span class="qtext">Eigener Name und Charakter? Wenn ja: wie drauf (motivierend, ruhig, humorvoll, direkt)?</span></p>
+<textarea class="ans" id="f52" rows="3"></textarea>
+</section>
+<section class="q" data-num="47">
+<p class="qhead"><span class="qnum">47.</span> <span class="qtext">Wie wollt ihr reden? (mehrere möglich)</span></p>
+<p class="note">KI-Stimmen klingen heute täuschend echt; man kann Stimme und Klangfarbe aussuchen — du könntest ihr also eine eigene Stimme geben.</p>
+<div class="opts">
+<label class="opt"><input type="checkbox" name="q47" value="Tippen / Chat"><span>Tippen / Chat</span></label>
+<label class="opt"><input type="checkbox" name="q47" value="Sprechen — sie antwortet mit echter Stimme"><span>Sprechen — sie antwortet mit echter Stimme</span></label>
+<label class="opt"><input type="checkbox" name="q47" value="Am Handy / unterwegs"><span>Am Handy / unterwegs</span></label>
+<label class="opt"><input type="checkbox" name="q47" value="Am Computer"><span>Am Computer</span></label>
+<label class="opt"><input type="checkbox" name="q47" value="Weiß ich noch nicht"><span>Weiß ich noch nicht</span></label>
+</div>
+</section>
+<section class="q" data-num="48">
+<p class="qhead"><span class="qnum">48.</span> <span class="qtext">Soll sie sich von selbst melden oder nur auf Nachfrage?</span></p>
+<p class="note">Von selbst = z. B. „Du wolltest diese Woche drehen — soll ich Ideen und ein Skript vorbereiten?“</p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q48" value="Nur auf Nachfrage"><span>Nur auf Nachfrage</span></label>
+<label class="opt"><input type="radio" name="q48" value="Darf mich anstupsen/erinnern"><span>Darf mich anstupsen/erinnern</span></label>
+<label class="opt"><input type="radio" name="q48" value="Mischung"><span>Mischung</span></label>
+</div>
+</section>
+<h2 class="sec">I — Datenschutz</h2>
+<section class="q" data-num="49">
+<p class="qhead"><span class="qnum">49.</span> <span class="qtext">Sensible Daten im Spiel? (Käuferdaten, Zahlungsinfos)</span></p>
+<div class="opts">
+<label class="opt"><input type="radio" name="q49" value="Ja"><span>Ja</span></label>
+<label class="opt"><input type="radio" name="q49" value="Nein"><span>Nein</span></label>
+<label class="opt"><input type="radio" name="q49" value="Unsicher"><span>Unsicher</span></label>
+</div>
+<label class="sub extra"><span class="sublabel">Wenn ja: welche?</span><input class="ans" id="f53" type="text" data-sub="Wenn ja: welche?" autocomplete="off"></label>
+</section>
+<section class="q" data-num="50">
+<p class="qhead"><span class="qnum">50.</span> <span class="qtext">Vorgaben, wo Daten liegen dürfen (z. B. nur EU)?</span></p>
+<textarea class="ans" id="f54" rows="3"></textarea>
+</section>
+<section class="q" data-num="51">
+<p class="qhead"><span class="qnum">51.</span> <span class="qtext">Etwas, das auf keinen Fall durch eine KI laufen soll?</span></p>
+<textarea class="ans" id="f55" rows="3"></textarea>
+</section>
+<h2 class="sec">J — Vision</h2>
+<p class="secnote">Was heute schon geht: aus einem fertigen Video automatisch Titel, Beschreibung, Social-Beiträge und Newsletter in deinem Ton · Repurposing (ein langes Video → mehrere Reels/Shorts) · aus einer Idee/Sprachnachricht ein Skript-Entwurf · ein Content-Kalender, der sich selbst füllt · DMs/Kommentare vorsortiert · ein Morgen-Überblick mit Verkäufen und To-dos · eine automatische Willkommens-Serie für neue Newsletter-Leute.</p>
+<section class="q" data-num="52">
+<p class="qhead"><span class="qnum">52.</span> <span class="qtext">KI hat über Nacht etwas für dich erledigt — was?</span></p>
+<textarea class="ans" id="f56" rows="3"></textarea>
+</section>
+<section class="q" data-num="53">
+<p class="qhead"><span class="qnum">53.</span> <span class="qtext">Bei welchen Entscheidungen hättest du gern Unterstützung? (z. B. „Welches Video als Nächstes?“, „Was verkauft sich?“)</span></p>
+<textarea class="ans" id="f57" rows="3"></textarea>
+</section>
+<section class="q" data-num="54">
+<p class="qhead"><span class="qnum">54.</span> <span class="qtext">Was darf die KI selbst machen, wo willst du immer das letzte Wort? (z. B. Posten, Antworten, Preise)</span></p>
+<textarea class="ans" id="f58" rows="3"></textarea>
+</section>
+<section class="q" data-num="55">
+<p class="qhead"><span class="qnum">55.</span> <span class="qtext">Woran würdest du nach einem Jahr merken, dass es ein Erfolg war?</span></p>
+<textarea class="ans" id="f59" rows="3"></textarea>
+</section>
+<h2 class="sec">K — Prioritäten, Budget, Zeit</h2>
+<section class="q" data-num="56">
+<p class="qhead"><span class="qnum">56.</span> <span class="qtext">Top 3 Schmerzpunkte zuerst?</span></p>
+<div class="subs">
+<label class="sub"><span class="sublabel">Schmerzpunkt 1</span><input class="ans" id="f60" type="text" data-sub="Schmerzpunkt 1" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Schmerzpunkt 2</span><input class="ans" id="f61" type="text" data-sub="Schmerzpunkt 2" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Schmerzpunkt 3</span><input class="ans" id="f62" type="text" data-sub="Schmerzpunkt 3" autocomplete="off"></label>
+</div>
+</section>
+<section class="q" data-num="57">
+<p class="qhead"><span class="qnum">57.</span> <span class="qtext">Laufende Kosten: Wie viel bist du bereit, monatlich fürs System zu tragen — und was zahlst du aktuell schon für Tools?</span></p>
+<div class="subs">
+<label class="sub"><span class="sublabel">Bereit, monatlich zu tragen</span><input class="ans" id="f63" type="text" data-sub="Bereit, monatlich zu tragen" autocomplete="off"></label>
+<label class="sub"><span class="sublabel">Aktuell schon für Tools</span><input class="ans" id="f64" type="text" data-sub="Aktuell schon für Tools" autocomplete="off"></label>
+</div>
+</section>
+<section class="q" data-num="58">
+<p class="qhead"><span class="qnum">58.</span> <span class="qtext">Zeit fürs Aufbauen &amp; Einarbeiten (pro Woche)?</span></p>
+<input class="ans" id="f65" type="text" autocomplete="off">
+</section>
+<section class="q" data-num="59">
+<p class="qhead"><span class="qnum">59.</span> <span class="qtext">Bis wann erstes Ergebnis? Anlass/Deadline?</span></p>
+<textarea class="ans" id="f66" rows="3"></textarea>
+</section>
+<h2 class="sec">L — Offen</h2>
+<section class="q" data-num="60">
+<p class="qhead"><span class="qnum">60.</span> <span class="qtext">Creator·in oder Setup, das dich inspiriert?</span></p>
+<textarea class="ans" id="f67" rows="3"></textarea>
+</section>
+<section class="q" data-num="61">
+<p class="qhead"><span class="qnum">61.</span> <span class="qtext">Was sollte ich wissen, wonach ich nicht gefragt hab?</span></p>
+<textarea class="ans" id="f68" rows="3"></textarea>
+</section>
+<section class="q" data-num="62">
+<p class="qhead"><span class="qnum">62.</span> <span class="qtext">Welche Frage war am schwersten — warum?</span></p>
+<textarea class="ans" id="f69" rows="3"></textarea>
+</section>
+<div class="actions"><button id="copy" class="btn primary" type="button">Antworten kopieren</button><button id="dl" class="btn" type="button">Als Textdatei speichern</button><button id="reset" class="btn ghost" type="button">Alles leeren</button></div>
+<p class="foot">Erstellt für dein Erstgespräch. Kein Konto nötig — alles bleibt auf deinem Rechner, bis du es kopierst.</p>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+const KEY="ki-fragebogen-v1";
+const all=()=>document.querySelectorAll('input, textarea');
+function save(){
+  try{
+    const d={}; all().forEach((el,i)=>{
+      if(el.type==='radio'||el.type==='checkbox') d[i]=el.checked; else d[i]=el.value;
+    });
+    localStorage.setItem(KEY, JSON.stringify(d));
+  }catch(e){}
+}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY)||'{}');
+    all().forEach((el,i)=>{ if(i in d){ if(el.type==='radio'||el.type==='checkbox') el.checked=d[i]; else el.value=d[i]; }});
+  }catch(e){}
+}
+function answered(q){
+  const r=q.querySelector('input[type=radio]:checked, input[type=checkbox]:checked');
+  if(r) return true;
+  return [...q.querySelectorAll('input[type=text], textarea')].some(i=>i.value.trim()!=='');
+}
+function progress(){
+  const qs=document.querySelectorAll('.q'); let c=0;
+  qs.forEach(q=>{ if(answered(q)) c++; });
+  document.getElementById('count').textContent=c+' / '+qs.length;
+  document.getElementById('fill').style.width=(c/qs.length*100)+'%';
+}
+function buildText(){
+  const out=[]; out.push('FRAGEBOGEN: KI-SETUP — AUSGEFÜLLT'); out.push('');
+  document.querySelectorAll('h2.sec, section.q').forEach(node=>{
+    if(node.matches('h2.sec')){ out.push(''); out.push('### '+node.textContent.trim()); out.push(''); return; }
+    const num=node.dataset.num;
+    const text=node.querySelector('.qtext').textContent.trim();
+    let a=[];
+    const checks=[...node.querySelectorAll('input[type=radio]:checked, input[type=checkbox]:checked')].map(c=>c.value);
+    if(checks.length) a.push(checks.join(', '));
+    node.querySelectorAll('input[type=text], textarea').forEach(i=>{
+      const v=i.value.trim(); if(v){ a.push(i.dataset.sub ? i.dataset.sub+': '+v : v); }
+    });
+    out.push(num+'. '+text);
+    out.push(a.length? a.join('\n') : '—');
+    out.push('');
+  });
+  return out.join('\n');
+}
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+document.addEventListener('input', ()=>{ save(); progress(); });
+document.addEventListener('change', ()=>{ save(); progress(); });
+document.getElementById('copy').addEventListener('click', async ()=>{
+  const txt=buildText();
+  try{ await navigator.clipboard.writeText(txt); toast('Antworten kopiert — schick sie mir einfach.'); }
+  catch(e){
+    const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); toast('Antworten kopiert.'); }catch(_){ toast('Kopieren ging nicht — nutze „Als Textdatei speichern“.'); }
+    ta.remove();
+  }
+});
+document.getElementById('dl').addEventListener('click', ()=>{
+  const blob=new Blob([buildText()], {type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='Fragebogen-KI-Setup-Antworten.txt'; a.click(); URL.revokeObjectURL(a.href);
+  toast('Datei gespeichert.');
+});
+document.getElementById('reset').addEventListener('click', ()=>{
+  if(!confirm('Wirklich alle Antworten löschen?')) return;
+  all().forEach(el=>{ if(el.type==='radio'||el.type==='checkbox') el.checked=false; else el.value=''; });
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  progress(); toast('Alles geleert.');
+});
+load(); progress();
+</script>
+</body>
+</html>
